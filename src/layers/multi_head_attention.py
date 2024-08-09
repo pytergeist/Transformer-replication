@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-class MultiHeadAttention(tf.keras.layers.Layer):
+class MultiHeadAttention(tf.keras.layers.Layer): # TODO: add split part functionality
     def __init__(self, d_embedding: int, num_heads: int, *args: list, **kwargs: dict) -> None:
         super().__init__(*args, **kwargs)
         self.d_embedding = d_embedding
