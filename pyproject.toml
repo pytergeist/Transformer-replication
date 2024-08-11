@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "transformer-replication"
+version = "0.0.1"
+description = "unofficial implamentation of transformer model from attention is all you need"
+authors = ["pytergeist <tompopeworks@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+tensorflow-macos = "^2.16.2"
+tensorflow-metal = "^1.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
