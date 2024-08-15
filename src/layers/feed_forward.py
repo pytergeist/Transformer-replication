@@ -12,10 +12,12 @@ class FeedForwardLayer(tf.keras.Model):
     def build(self, input_shape):
         self.weights = self.add_weights(
             shape=(input_shape[-1], self.units),
-            initializer='random_normal',
-            trainable=True
+            initializer="random_normal",
+            trainable=True,
         )
-        self.bias = self.add_weight(shape=(self.units,), initializer='random_normal', trainable=True)
+        self.bias = self.add_weight(
+            shape=(self.units,), initializer="random_normal", trainable=True
+        )
 
     def call(self, inputs):
         return tf.matmul(inputs, self.weights) + self.bias
@@ -24,7 +26,7 @@ class FeedForwardLayer(tf.keras.Model):
 class FeedForwardNetwork(tf.keras.layers.Layer):
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.dense_1 = tf.keras.layers.Dense(units=d_ff, activation='relu')
+        self.dense_1 = tf.keras.layers.Dense(units=d_ff, activation="relu")
         self.relu_1 = tf.keras.layers.ReLU()
         self.dense_2 = tf.keras.layers.Dense(units=d_model)
 
@@ -38,7 +40,9 @@ class FeedForwardNetwork(tf.keras.layers.Layer):
 if __name__ == "__main__":
     tf.random.set_seed(42)
 
-    sample_input = tf.random.uniform((64, 50, 512))  # Example: batch_size=64, sequence_length=50, d_model=512
+    sample_input = tf.random.uniform(
+        (64, 50, 512)
+    )  # Example: batch_size=64, sequence_length=50, d_model=512
 
     ffn = FeedForwardNetwork(d_model=512, d_ff=2048)
 

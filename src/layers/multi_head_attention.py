@@ -1,8 +1,10 @@
 import tensorflow as tf
 
 
-class MultiHeadAttention(tf.keras.layers.Layer): # TODO: implament masking
-    def __init__(self, d_embedding: int, num_heads: int, *args: list, **kwargs: dict) -> None:
+class MultiHeadAttention(tf.keras.layers.Layer):  # TODO: implament masking
+    def __init__(
+        self, d_embedding: int, num_heads: int, *args: list, **kwargs: dict
+    ) -> None:
         super().__init__(*args, **kwargs)
         self.d_embedding = d_embedding
         self.num_heads = num_heads
