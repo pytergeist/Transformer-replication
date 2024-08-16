@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 from collections import Counter, defaultdict
 
 
@@ -21,11 +21,35 @@ class BytePairEncoding:
                 pair_frequencies[(chars[idx], chars[idx + 1])] += frequency
         return pair_frequencies
 
+    def merge_pairs(self, pair_frequencies, vocab):
+        most_frequent_pair_idx = np.argmax(list(pair_frequencies.values()))
+        most_frequent_pair = list(pair_frequencies.keys())[most_frequent_pair_idx]
+        most_frequent_pair_str = ' '.join(most_frequent_pair)
+        replacement = ''.join(most_frequent_pair)
+
+        merged_vocab = {}
+        for word, frequency in vocab.items():
+            new_word = word.replace(most_frequent_pair_str, replacement)
+            merged_vocab[new_word] = frequency
+
+        return merged_vocab
+
+    def encode(self, corpus, num_merges):
+        vocab = self.get_vocab_frequencies(corpus)
+        vocab = self.split_vocab_into_chars(vocab)
+
+        for i in range(num_merges):
+            pair_frequencies = self.calculate_pair_frequency(vocab)
+            if not pair_frequencies:
+                break
+            vocab = self.merge_pairs(pair_frequencies, vocab)
+            print(f"Step {i + 1}, updated vocab: {vocab}")
+
+        return vocab
+
 
 if __name__ == "__main__":
     corpus = "Tom is working hard to build a tokeniser because a tokeniser is working for tom"
     encoder = BytePairEncoding()
-    vocab = encoder.get_vocab_frequencies(corpus)
-    vocab = encoder.split_vocab_into_chars(vocab)
-    freqs = encoder.calculate_pair_frequency(vocab)
-    print(freqs)
+    final_vocab = encoder.encode(corpus, num_merges=5)
+    print("Final Vocab:", final_vocab)
