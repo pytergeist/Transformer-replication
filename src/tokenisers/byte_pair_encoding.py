@@ -11,7 +11,7 @@ class BytePairEncoding:
         return {word: frequency for word, frequency in word_frequencies.items()}
 
     def split_vocab_into_chars(self, vocab):
-        return {" ".join(key): value for key, value in vocab.items()}
+        return {" ".join(list(key)): value for key, value in vocab.items()}
 
     def calculate_pair_frequency(self, vocab):
         pair_frequencies = defaultdict(int)
@@ -22,8 +22,7 @@ class BytePairEncoding:
         return pair_frequencies
 
     def merge_pairs(self, pair_frequencies, vocab):
-        most_frequent_pair_idx = np.argmax(list(pair_frequencies.values()))
-        most_frequent_pair = list(pair_frequencies.keys())[most_frequent_pair_idx]
+        most_frequent_pair = max(pair_frequencies, key=pair_frequencies.get)
         most_frequent_pair_str = ' '.join(most_frequent_pair)
         replacement = ''.join(most_frequent_pair)
 
@@ -34,22 +33,32 @@ class BytePairEncoding:
 
         return merged_vocab
 
-    def encode(self, corpus, num_merges):
+    def encode(self, corpus):
         vocab = self.get_vocab_frequencies(corpus)
         vocab = self.split_vocab_into_chars(vocab)
-
-        for i in range(num_merges):
+        step = 0
+        while True:
             pair_frequencies = self.calculate_pair_frequency(vocab)
             if not pair_frequencies:
                 break
+            most_frequent_pair = max(pair_frequencies, key=pair_frequencies.get)
+            if pair_frequencies[most_frequent_pair] == 0:
+                break
             vocab = self.merge_pairs(pair_frequencies, vocab)
-            print(f"Step {i + 1}, updated vocab: {vocab}")
-
+            step += 1
         return vocab
 
 
 if __name__ == "__main__":
-    corpus = "Tom is working hard to build a tokeniser because a tokeniser is working for tom"
+    import nltk
+
+    nltk.download('brown')
+    from nltk.corpus import brown
+
+    corpus = ' '.join(brown.words())
+
     encoder = BytePairEncoding()
-    final_vocab = encoder.encode(corpus, num_merges=5)
+    final_vocab = encoder.encode(corpus)
     print("Final Vocab:", final_vocab)
+
+
