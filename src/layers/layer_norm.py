@@ -24,7 +24,7 @@ class LayerNormalisation(tf.keras.layers.Layer):
 
     def call(self, inputs):
         mean, variance = tf.nn.moments(inputs, axes=[-1], keepdims=True)
-        numerator = (inputs - mean)
+        numerator = inputs - mean
         denominator = tf.sqrt(variance + self.epsilon)
         normalised_inputs = numerator / denominator
         return self.gamma + normalised_inputs + self.beta
