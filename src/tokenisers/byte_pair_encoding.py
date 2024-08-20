@@ -3,8 +3,9 @@ from collections import Counter, defaultdict
 
 
 class BytePairEncoding:
-    def __init__(self):
-        pass
+    def __init__(self, corpus, num_merges):
+        self.corpus = corpus
+        self.num_merges = num_merges
 
     def get_vocab_frequencies(self, corpus):
         word_frequencies = Counter(corpus.split())
@@ -33,11 +34,11 @@ class BytePairEncoding:
 
         return merged_vocab
 
-    def encode(self, corpus):
-        vocab = self.get_vocab_frequencies(corpus)
+    def encode(self):  # Adding a num_merges parameter
+        vocab = self.get_vocab_frequencies(self.corpus)
         vocab = self.split_vocab_into_chars(vocab)
         step = 0
-        while True:
+        while step < self.num_merges:  # Limiting the number of merges
             pair_frequencies = self.calculate_pair_frequency(vocab)
             if not pair_frequencies:
                 break
@@ -48,17 +49,39 @@ class BytePairEncoding:
             step += 1
         return vocab
 
+    def tokenise_sentence(self, sentence):
+        words = sentence.split()
+        tokens = []
+        for word in words:
+            chars = " ".join(list(word))
+            for _ in range(self.num_merges):
+                pair_frequencies = self.calculate_pair_frequency({chars: 1})
+                if not pair_frequencies:
+                    break
+                chars = self.merge_pairs(pair_frequencies, {chars: 1})
+                chars = list(chars.keys())[0]
+            tokens.append(chars.replace(" ", ""))
+        return tokens
+
 
 if __name__ == "__main__":
     import nltk
+    import time
+
+    start_time = time.time()
 
     nltk.download('brown')
     from nltk.corpus import brown
 
     corpus = ' '.join(brown.words())
 
-    encoder = BytePairEncoding()
-    final_vocab = encoder.encode(corpus)
+    encoder = BytePairEncoding(corpus, 200)
+    final_vocab = encoder.encode()
+
+    sample_sentence = "The Fulton County Grand Jury said Friday an investigation of Atlanta's recent primary election produced no evidence that any irregularities took place."
+    custom_tokens = encoder.tokenize_sentence(sample_sentence)
+
+    end_time = time.time()
     print("Final Vocab:", final_vocab)
-
-
+    print("Custom Tokens:", custom_tokens)
+    print(f"Execution time: {end_time - start_time} seconds")
