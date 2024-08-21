@@ -15,6 +15,7 @@ file_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 sys.path.append(file_path)
 
 from src.tokenisers.byte_pair_encoding import BytePairEncoding
+from src.tokenisers.normalisers import LowerCaseNormaliser
 
 nltk.download('brown')
 
@@ -25,7 +26,7 @@ tokenizer = Tokenizer(BPE())
 
 tokenizer.pre_tokenizer = Whitespace()
 
-tokenizer.normalizer = normalizers.Sequence([NFD(), Lowercase(), StripAccents()])
+tokenizer.normalizer = normalizers.Sequence([Lowercase()]) # NFD(), , StripAccents()
 
 tokenizer.decoder = ByteLevelDecoder()
 
@@ -36,6 +37,7 @@ sample_sentence = "The Fulton County Grand Jury said Friday an investigation of 
 encoded = tokenizer.encode(sample_sentence)
 
 encoder = BytePairEncoding(corpus_str, 500)
+encoder.set_normaliser([LowerCaseNormaliser()])
 final_vocab = encoder.encode()
 custom_tokens = encoder.tokenise_sentence(sample_sentence)
 
