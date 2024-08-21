@@ -62,8 +62,9 @@ class BytePairEncoding:
         return vocab
 
     def tokenise_sentence(self, sentence):
-        for normalise in self.normalise:
-            sentence = normalise.apply(sentence)
+        if hasattr(self, "normalise"):
+            for normalise in self.normalise:
+                sentence = normalise.apply(sentence)
         words = sentence.split()
         tokens = []
         for word in words:
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     final_vocab = encoder.encode()
 
     sample_sentence = "The Fulton County Grand Jury said Friday an investigation of Atlanta's recent primary election produced no evidence that any irregularities took place."
-    custom_tokens = encoder.tokenize_sentence(sample_sentence)
+    custom_tokens = encoder.tokenise_sentence(sample_sentence)
 
     end_time = time.time()
     print("Final Vocab:", final_vocab)
