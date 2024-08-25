@@ -7,5 +7,4 @@ TODO:
         - read original bpe paper
     - asses compression ratio
     - benchmark against the large text compression benchmark
-    - add adam optimiser from scratch 
-    - 
+    - add adam optimiser from scratch
