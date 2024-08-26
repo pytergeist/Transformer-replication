@@ -17,7 +17,7 @@ sys.path.append(file_path)
 from src.tokenisers.byte_pair_encoding import BytePairEncoding
 from src.tokenisers.normalisers import LowerCaseNormaliser
 
-nltk.download('brown')
+nltk.download("brown")
 
 corpus = [" ".join(sent) for sent in brown.sents()]
 corpus_str = " ".join(brown.words())
@@ -26,11 +26,13 @@ tokenizer = Tokenizer(BPE())
 
 tokenizer.pre_tokenizer = Whitespace()
 
-tokenizer.normalizer = normalizers.Sequence([Lowercase()]) # NFD(), , StripAccents()
+tokenizer.normalizer = normalizers.Sequence([Lowercase()])  # NFD(), , StripAccents()
 
 tokenizer.decoder = ByteLevelDecoder()
 
-trainer = BpeTrainer(vocab_size=10000, min_frequency=2, special_tokens=["<pad>", "<s>", "</s>", "<unk>"])
+trainer = BpeTrainer(
+    vocab_size=10000, min_frequency=2, special_tokens=["<pad>", "<s>", "</s>", "<unk>"]
+)
 tokenizer.train_from_iterator(corpus, trainer=trainer)
 
 sample_sentence = "The Fulton County Grand Jury said Friday an investigation of Atlanta's recent primary election produced no evidence that any irregularities took place."
