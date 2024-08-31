@@ -33,8 +33,8 @@ class BytePairEncoding:
     @staticmethod
     def merge_pairs(pair_frequencies, vocab):
         most_frequent_pair = max(pair_frequencies, key=pair_frequencies.get)
-        most_frequent_pair_str = ' '.join(most_frequent_pair)
-        replacement = ''.join(most_frequent_pair)
+        most_frequent_pair_str = " ".join(most_frequent_pair)
+        replacement = "".join(most_frequent_pair)
 
         merged_vocab = {}
         for word, frequency in vocab.items():
@@ -85,10 +85,10 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    nltk.download('brown')
+    nltk.download("brown")
     from nltk.corpus import brown
 
-    corpus = ' '.join(brown.words())
+    corpus = " ".join(brown.words())
 
     encoder = BytePairEncoding(corpus, 200)
     final_vocab = encoder.encode()
