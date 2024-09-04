@@ -1,4 +1,5 @@
 # Layer implementations using keras subclassing
 
 TODO:
-    - Adding positional encoding code
+    - Add positional encoding code
+    - Add Masking to transformer blocks
