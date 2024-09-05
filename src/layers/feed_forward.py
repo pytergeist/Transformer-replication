@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     sample_input = tf.random.uniform(
         (64, 50, 512)
-    )  # Example: batch_size=64, sequence_length=50, d_model=512
+    )
 
     ffn = FeedForwardNetwork(d_model=512, d_ff=2048)
 
