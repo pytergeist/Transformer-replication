@@ -33,9 +33,7 @@ class LayerNormalisation(tf.keras.layers.Layer):
 if __name__ == "__main__":
     tf.random.set_seed(42)
 
-    sample_input = tf.random.uniform(
-        (64, 50, 512)
-    )
+    sample_input = tf.random.uniform((64, 50, 512))
 
     ffn = LayerNormalisation()
 
