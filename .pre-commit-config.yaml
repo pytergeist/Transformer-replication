@@ -27,3 +27,5 @@ repos:
         entry: flake8
         language: python
         files: ^src/layers/.*\.py$|^src/tokenisers/.*\.py$
+        args: ["--config=pyproject.toml"]
+        additional_dependencies: ["flake8==7.1.1"]

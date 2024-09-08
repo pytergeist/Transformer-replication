@@ -26,26 +26,12 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 88
 include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+exclude = '/(\.git|\.hg|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist)/'
 
 [tool.isort]
 profile = "black"
 
 [tool.flake8]
 max-line-length = 88
-extend-ignore = [
-"E501",
-]
-extend-select = ["B"]
+extend-ignore = "E501"
+extend-select = "B"
