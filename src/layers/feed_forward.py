@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 
-class FeedForwardLayer(tf.keras.Model):
+class FeedForwardLayer(tf.keras.layers.Layer):
 
     def __init__(self, units, input_d, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
@@ -23,7 +23,7 @@ class FeedForwardLayer(tf.keras.Model):
         return tf.matmul(inputs, self.weights) + self.bias
 
 
-class FeedForwardNetwork(tf.keras.layers.Layer):
+class FeedForwardNetwork(tf.keras.Model):
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.dense_1 = tf.keras.layers.Dense(units=d_ff, activation="relu")
