@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     batch_size = 2
     seq_length = 3
-    d_embedding = 8  # Must be divisible by num_heads
+    d_embedding = 8
     num_heads = 2
 
     np.random.seed(0)

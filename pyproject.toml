@@ -14,9 +14,24 @@ tensorflow-metal = "^1.1.0"
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"
 flake8 = "^7.1.1"
+
 isort = "^5.13.2"
 nltk = "^3.9.1"
+pre-commit = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '/(\.git|\.hg|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist)/'
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = "E501"
+extend-select = "B"

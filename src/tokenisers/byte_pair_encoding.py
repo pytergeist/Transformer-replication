@@ -1,4 +1,4 @@
-import numpy as np
+import re
 from collections import Counter, defaultdict
 
 
@@ -11,6 +11,9 @@ class BytePairEncoding:
         if not isinstance(normalise, list):
             normalise = [normalise]
         setattr(self, "normalise", normalise)
+
+    def preprocess_corpus(self, text):
+        return re.sub(r"(\W)", r" \1 ", text)
 
     @staticmethod
     def get_vocab_frequencies(corpus):
@@ -47,6 +50,7 @@ class BytePairEncoding:
         if hasattr(self, "normalise"):
             for normalise in self.normalise:
                 self.corpus = normalise.apply(self.corpus)
+        self.corpus = self.preprocess_corpus(self.corpus)
         vocab = self.get_vocab_frequencies(self.corpus)
         vocab = self.split_vocab_into_chars(vocab)
         step = 0
@@ -65,6 +69,7 @@ class BytePairEncoding:
         if hasattr(self, "normalise"):
             for normalise in self.normalise:
                 sentence = normalise.apply(sentence)
+        sentence = self.preprocess_corpus(sentence)
         words = sentence.split()
         tokens = []
         for word in words:
@@ -80,8 +85,9 @@ class BytePairEncoding:
 
 
 if __name__ == "__main__":
-    import nltk
     import time
+
+    import nltk
 
     start_time = time.time()
 

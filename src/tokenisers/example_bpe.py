@@ -1,15 +1,14 @@
 import os
+import sys
 
 import nltk
-from tokenizers import Tokenizer
-from tokenizers.models import BPE
-from tokenizers.trainers import BpeTrainer
-from tokenizers.pre_tokenizers import Whitespace
-from tokenizers import normalizers
-from tokenizers.normalizers import Lowercase, NFD, StripAccents
-from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 from nltk.corpus import brown
-import sys
+from tokenizers import Tokenizer, normalizers
+from tokenizers.decoders import ByteLevel as ByteLevelDecoder
+from tokenizers.models import BPE
+from tokenizers.normalizers import NFD, Lowercase, StripAccents
+from tokenizers.pre_tokenizers import Whitespace
+from tokenizers.trainers import BpeTrainer
 
 file_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(file_path)
@@ -26,7 +25,7 @@ tokenizer = Tokenizer(BPE())
 
 tokenizer.pre_tokenizer = Whitespace()
 
-tokenizer.normalizer = normalizers.Sequence([Lowercase()])  # NFD(), , StripAccents()
+tokenizer.normalizer = normalizers.Sequence([Lowercase(), NFD(), StripAccents()])
 
 tokenizer.decoder = ByteLevelDecoder()
 
@@ -35,7 +34,10 @@ trainer = BpeTrainer(
 )
 tokenizer.train_from_iterator(corpus, trainer=trainer)
 
-sample_sentence = "The Fulton County Grand Jury said Friday an investigation of Atlanta's recent primary election produced no evidence that any irregularities took place."
+sample_sentence = """
+The Fulton County Grand Jury said Friday an investigation of Atlanta's
+recent primary election produced no evidence that any irregularities took place.
+In the building's their were big wooden piece's"""
 encoded = tokenizer.encode(sample_sentence)
 
 encoder = BytePairEncoding(corpus_str, 500)
