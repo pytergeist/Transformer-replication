@@ -5,8 +5,8 @@ import tensorflow as tf
 
 class FeedForwardLayer(tf.keras.layers.Layer):
 
-    def __init__(self, units, input_d, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+    def __init__(self, units, *args, **kwargs):
+        super(FeedForwardLayer, self).__init__(*args, **kwargs)
         self.units = units
 
     def build(self, input_shape):
@@ -25,7 +25,7 @@ class FeedForwardLayer(tf.keras.layers.Layer):
 
 class FeedForwardNetwork(tf.keras.Model):
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(FeedForwardNetwork, self).__init__(*args, **kwargs)
         self.dense_1 = tf.keras.layers.Dense(units=d_ff, activation="relu")
         self.relu_1 = tf.keras.layers.ReLU()
         self.dense_2 = tf.keras.layers.Dense(units=d_model)
