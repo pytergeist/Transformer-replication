@@ -4,7 +4,7 @@ import tensorflow as tf
 
 
 class LayerNormalisation(tf.keras.layers.Layer):
-    def __init__(self, epsilon=1e-8, *args, **kwargs):
+    def __init__(self, epsilon=1e-8, *args, **kwargs):  # TODO: add k.learning_phase?
         super().__init__(*args, **kwargs)
         self.epsilon = epsilon
 

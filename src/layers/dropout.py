@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 
-class DropoutLayer(tf.keras.layers.Layer):
+class DropoutLayer(tf.keras.layers.Layer):  # TODO: add k.learning_phase
     def __init__(self, rate):
         super(DropoutLayer, self).__init__()
         self.rate = rate
