@@ -10,7 +10,7 @@ class FeedForwardLayer(tf.keras.layers.Layer):  # TODO: add_weights not working
         self.units = units
 
     def build(self, input_shape):
-        self.weights = self.add_weights(
+        self.kernel = self.add_weight(
             shape=(input_shape[-1], self.units),
             initializer="random_normal",
             trainable=True,
@@ -20,7 +20,7 @@ class FeedForwardLayer(tf.keras.layers.Layer):  # TODO: add_weights not working
         )
 
     def call(self, inputs):
-        return tf.matmul(inputs, self.weights) + self.bias
+        return tf.matmul(inputs, self.kernel) + self.bias
 
 
 if __name__ == "__main__":
