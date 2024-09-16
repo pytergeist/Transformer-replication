@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 
-class FeedForwardLayer(tf.keras.layers.Layer):
+class FeedForwardLayer(tf.keras.layers.Layer):  # TODO: add_weights not working
 
     def __init__(self, units, *args, **kwargs):
         super(FeedForwardLayer, self).__init__(*args, **kwargs)
