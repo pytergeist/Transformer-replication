@@ -23,26 +23,12 @@ class FeedForwardLayer(tf.keras.layers.Layer):
         return tf.matmul(inputs, self.weights) + self.bias
 
 
-class FeedForwardNetwork(tf.keras.Model):
-    def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
-        super(FeedForwardNetwork, self).__init__(*args, **kwargs)
-        self.dense_1 = tf.keras.layers.Dense(units=d_ff, activation="relu")
-        self.relu_1 = tf.keras.layers.ReLU()
-        self.dense_2 = tf.keras.layers.Dense(units=d_model)
-
-    def call(self, inputs):
-        x = self.dense_1(inputs)
-        x = self.relu_1(x)
-        x = self.dense_2(x)
-        return x
-
-
 if __name__ == "__main__":
     tf.random.set_seed(42)
 
     sample_input = tf.random.uniform((64, 50, 512))
 
-    ffn = FeedForwardNetwork(d_model=512, d_ff=2048)
+    ffn = FeedForwardLayer(units=512)
 
     output = ffn(sample_input)
 
