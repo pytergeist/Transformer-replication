@@ -4,7 +4,7 @@ import tensorflow as tf
 
 
 class LayerNormalisation(tf.keras.layers.Layer):
-    def __init__(self, epsilon=1e-8, *args, **kwargs):  # TODO: add k.learning_phase?
+    def __init__(self, epsilon=1e-8, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.epsilon = epsilon
 
@@ -27,7 +27,7 @@ class LayerNormalisation(tf.keras.layers.Layer):
         numerator = inputs - mean
         denominator = tf.sqrt(variance + self.epsilon)
         normalised_inputs = numerator / denominator
-        return self.gamma + normalised_inputs + self.beta
+        return self.gamma * normalised_inputs + self.beta
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ from src.layers.feed_forward import FeedForwardLayer
 from src.activations.relu import ReLUActivation
 
 
-class FeedForwardNetwork(tf.keras.Model):  # TODO add feed forward layer?
+class FeedForwardNetwork(tf.keras.Model):
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
         super(FeedForwardNetwork, self).__init__(*args, **kwargs)
         self.dense_1 = FeedForwardLayer(units=d_ff)
