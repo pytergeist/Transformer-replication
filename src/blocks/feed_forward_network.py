@@ -4,12 +4,14 @@ import os
 import tensorflow as tf
 
 from src.layers.feed_forward import FeedForwardLayer
+from src.activations.relu import ReLUActivation
 
-class FeedForwardNetwork(tf.keras.Model): # TODO add feed forward layer?
+
+class FeedForwardNetwork(tf.keras.Model):  # TODO add feed forward layer?
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
         super(FeedForwardNetwork, self).__init__(*args, **kwargs)
         self.dense_1 = FeedForwardLayer(units=d_ff)
-        self.relu_1 = tf.keras.layers.ReLU() # TODO: implament ReLU activation function
+        self.relu_1 = ReLUActivation()
         self.dense_2 = FeedForwardLayer(units=d_model)
 
     def call(self, inputs):
