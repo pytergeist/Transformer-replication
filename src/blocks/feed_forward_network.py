@@ -1,4 +1,5 @@
-# feed_forward_network
+# feed_forward_network.py
+
 import os
 
 import tensorflow as tf
