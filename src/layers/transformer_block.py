@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 
+from src.layers.dropout import DropoutLayer
 from src.layers.feed_forward import FeedForwardNetwork
 from src.layers.layer_norm import LayerNormalisation
 from src.layers.multi_head_attention import MultiHeadAttention
@@ -21,10 +22,10 @@ class TransformerBlock(tf.keras.layers.Layer):
 
     def call(self, inputs, mask=None):
         attention_output = self.attention(inputs)
-        # TODO: add a dropout layer in here
+        attention_output = DropoutLayer(0.5)(attention_output)
         output_skip1 = self.layer_norm1(inputs + attention_output)
         ffn_output = self.feed_forward(output_skip1)
-        # TODO: add a dropout layer here
+        ffn_output = DropoutLayer(0.5)(ffn_output)
         return self.layer_norm2(output_skip1 + ffn_output)
 
 
