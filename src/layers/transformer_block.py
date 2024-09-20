@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 
+from src.blocks.feed_forward_network import FeedForwardNetwork
 from src.layers.dropout import DropoutLayer
-from src.layers.feed_forward import FeedForwardNetwork
 from src.layers.layer_norm import LayerNormalisation
 from src.layers.multi_head_attention import MultiHeadAttention
 
