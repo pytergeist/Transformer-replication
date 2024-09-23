@@ -28,3 +28,28 @@ class EncoderBlock(tf.keras.layers.Layer):
         ffn_output = self.feed_forward(output_skip1)
         ffn_output = DropoutLayer(self.dropout_rate)(ffn_output)
         return self.layer_norm2(output_skip1 + ffn_output)
+
+
+
+
+if __name__ == "__main__":
+    tf.random.set_seed(42)
+
+    batch_size = 64
+    seq_length = 50
+    d_model = 512
+    num_heads = 8
+    d_ff = 2048
+
+    sample_input = tf.random.uniform((batch_size, seq_length, d_model))
+
+    sample_mask = None
+
+    transformer_block = EncoderBlock(
+        d_model=d_model, num_heads=num_heads, d_ff=d_ff
+    )
+
+    output = transformer_block(sample_input, mask=sample_mask)
+
+    print(f"Output shape: {output.shape}")
+    print(f"Sample output (first element of the first batch): {output[0][0]}")
