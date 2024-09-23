@@ -30,8 +30,6 @@ class EncoderBlock(tf.keras.layers.Layer):
         return self.layer_norm2(output_skip1 + ffn_output)
 
 
-
-
 if __name__ == "__main__":
     tf.random.set_seed(42)
 
@@ -45,9 +43,7 @@ if __name__ == "__main__":
 
     sample_mask = None
 
-    transformer_block = EncoderBlock(
-        d_model=d_model, num_heads=num_heads, d_ff=d_ff
-    )
+    transformer_block = EncoderBlock(d_model=d_model, num_heads=num_heads, d_ff=d_ff)
 
     output = transformer_block(sample_input, mask=sample_mask)
 
