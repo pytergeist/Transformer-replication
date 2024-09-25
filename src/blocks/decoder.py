@@ -80,7 +80,12 @@ if __name__ == "__main__":
 
     transformer_stack = DecoderStack(d_model=d_model, num_heads=num_heads, d_ff=d_ff)
 
-    output = transformer_stack(sample_input, encoder_output, look_ahead_mask=sample_mask, padding_mask=sample_mask)
+    output = transformer_stack(
+        sample_input,
+        encoder_output,
+        look_ahead_mask=sample_mask,
+        padding_mask=sample_mask,
+    )
 
     print(f"Output shape: {output.shape}")
     print(f"Sample output (first element of the first batch): {output[0][0]}")
