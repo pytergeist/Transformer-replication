@@ -25,7 +25,7 @@ class Transformer(tf.keras.Model):
     ):
         super(Transformer, self).__init__(*args, **kwargs)
 
-        self.num_heads = num_heads  # Initialize num_heads
+        self.num_heads = num_heads
         self.encoder = EncoderStack(num_layers, d_model, num_heads, d_ff, dropout_rate)
         self.decoder = DecoderStack(num_layers, d_model, num_heads, d_ff, dropout_rate)
         self.final_layer = FeedForwardLayer(target_vocab_size)
@@ -49,12 +49,9 @@ class Transformer(tf.keras.Model):
 
     def call(
         self,
-        x,
-        enc_padding_mask=None,
-        look_ahead_mask=None,
-        dec_padding_mask=None,
+        inputs,
     ):
-        inputs, targets = x
+        inputs, targets = inputs
         inputs = self.positional_encoding_inputs(inputs)
         targets = self.positional_encoding_targets(targets)
 
@@ -92,8 +89,8 @@ if __name__ == "__main__":
     num_heads = 8
     d_ff = 2048
     num_layers = 6
-    input_vocab_size = 8500
-    target_vocab_size = 8000
+    input_vocab_size = 85
+    target_vocab_size = 80
     max_seq_len_input = 256
     max_seq_len_target = 256
     num_epochs = 2
@@ -110,6 +107,10 @@ if __name__ == "__main__":
     inputs = sample_input
     targets = sample_target[:, :-1]
     targets_shifted = sample_target[:, 1:]
+
+    padded_targets = tf.pad(targets, [[0, 0], [0, 1]], "CONSTANT")
+    padded_targets_shifted = tf.pad(targets_shifted, [[0, 0], [0, 1]], "CONSTANT")
+
 
     transformer = Transformer(
         num_layers,
@@ -131,8 +132,8 @@ if __name__ == "__main__":
 
     # Train the model
     transformer.fit(
-        x=(inputs, targets),
-        y=targets_shifted,
+        x=(inputs, padded_targets),
+        y=padded_targets_shifted,
         batch_size=batch_size,
         epochs=num_epochs
     )
