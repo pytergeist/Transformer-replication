@@ -39,7 +39,9 @@ class Transformer(tf.keras.Model):
 
     def create_padding_mask(self, seq):
         mask = tf.cast(tf.math.equal(seq, 0), tf.float32)
-        return mask[:, tf.newaxis, tf.newaxis, :]
+        mask = tf.squeeze(mask[:, tf.newaxis, tf.newaxis, :, :1], axis=-1)
+        log_tensor_shape(mask, "initial padding mask shape")
+        return mask
 
     def create_look_ahead_mask(self, size):
         mask = 1 - tf.linalg.band_part(tf.ones((size, size)), -1, 0)
@@ -47,13 +49,12 @@ class Transformer(tf.keras.Model):
 
     def call(
         self,
-        inputs,
-        targets,
+        x,
         enc_padding_mask=None,
         look_ahead_mask=None,
         dec_padding_mask=None,
     ):
-
+        inputs, targets = x
         inputs = self.positional_encoding_inputs(inputs)
         targets = self.positional_encoding_targets(targets)
 
@@ -95,13 +96,20 @@ if __name__ == "__main__":
     target_vocab_size = 8000
     max_seq_len_input = 256
     max_seq_len_target = 256
+    num_epochs = 2
 
+    # Create sample data
     sample_input = tf.random.uniform(
         (batch_size, seq_length_input), maxval=input_vocab_size, dtype=tf.int32
     )
     sample_target = tf.random.uniform(
         (batch_size, seq_length_target), maxval=target_vocab_size, dtype=tf.int32
     )
+
+    # Prepare inputs and targets
+    inputs = sample_input
+    targets = sample_target[:, :-1]
+    targets_shifted = sample_target[:, 1:]
 
     transformer = Transformer(
         num_layers,
@@ -114,4 +122,17 @@ if __name__ == "__main__":
         max_seq_len_target,
     )
 
-    output = transformer(sample_input, sample_target)
+    # Compile the model
+    transformer.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+    )
+
+    # Train the model
+    transformer.fit(
+        x=(inputs, targets),
+        y=targets_shifted,
+        batch_size=batch_size,
+        epochs=num_epochs
+    )
