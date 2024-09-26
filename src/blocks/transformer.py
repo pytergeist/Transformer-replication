@@ -38,7 +38,8 @@ class Transformer(tf.keras.Model):
         self.dropout = DropoutLayer(dropout_rate)
 
     def create_padding_mask(self, seq):
-        return tf.cast(tf.math.equal(seq, 0), tf.float32)[:, tf.newaxis, :, :]
+        mask = tf.cast(tf.math.equal(seq, 0), tf.float32)
+        return mask[:, tf.newaxis, tf.newaxis, :]
 
     def create_look_ahead_mask(self, size):
         mask = 1 - tf.linalg.band_part(tf.ones((size, size)), -1, 0)
@@ -84,16 +85,16 @@ if __name__ == "__main__":
     tf.random.set_seed(42)
 
     batch_size = 64
-    seq_length_input = 50
-    seq_length_target = 60
+    seq_length_input = 256
+    seq_length_target = 256
     d_model = 512
     num_heads = 8
     d_ff = 2048
     num_layers = 6
     input_vocab_size = 8500
     target_vocab_size = 8000
-    max_seq_len_input = 100
-    max_seq_len_target = 100
+    max_seq_len_input = 256
+    max_seq_len_target = 256
 
     sample_input = tf.random.uniform(
         (batch_size, seq_length_input), maxval=input_vocab_size, dtype=tf.int32

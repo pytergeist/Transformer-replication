@@ -25,10 +25,13 @@ class DecoderBlock(tf.keras.layers.Layer):
     def call(self, inputs, encoder_output, look_ahead_mask=None, padding_mask=None):
         try:
 
+            logger.info("Starting MH1")
             attn1 = self.attention1(inputs, mask=look_ahead_mask)
 
             attn1 = DropoutLayer(self.dropout_rate)(attn1)
             out1 = self.layer_norm1(inputs + attn1)
+            logger.info("Starting MH2")
+            log_tensor_shape(padding_mask, "padding_mask for MH2")
             attn2 = self.attention2(
                 out1,
                 key_input=encoder_output,
