@@ -2,28 +2,21 @@ import tensorflow_datasets as tfds
 import tensorflow as tf
 
 
-def load_and_preprocess_data(batch_size=64, max_length=40):
-    examples, _ = tfds.load("wmt14_translate/de-en", with_info=True, as_supervised=True)
-    train_examples, val_examples = examples["train"], examples["validation"]
+def load_and_preprocess_data(batch_size=64, max_length=40, train_size=None, val_size=None):
+    examples, _ = tfds.load('wmt14_translate/de-en', with_info=True, as_supervised=True)
+
+    # Limit the dataset size if train_size or val_size is specified
+    train_examples = examples['train'].take(train_size) if train_size else examples['train']
+    val_examples = examples['validation'].take(val_size) if val_size else examples['validation']
 
     tokenizer_en = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
-        (en.numpy() for de, en in train_examples), target_vocab_size=2**13
-    )
+        (en.numpy() for de, en in train_examples), target_vocab_size=2 ** 13)
     tokenizer_de = tfds.deprecated.text.SubwordTextEncoder.build_from_corpus(
-        (de.numpy() for de, en in train_examples), target_vocab_size=2**13
-    )
+        (de.numpy() for de, en in train_examples), target_vocab_size=2 ** 13)
 
     def encode(lang1, lang2):
-        lang1 = (
-            [tokenizer_de.vocab_size]
-            + tokenizer_de.encode(lang1.numpy())
-            + [tokenizer_de.vocab_size + 1]
-        )
-        lang2 = (
-            [tokenizer_en.vocab_size]
-            + tokenizer_en.encode(lang2.numpy())
-            + [tokenizer_en.vocab_size + 1]
-        )
+        lang1 = [tokenizer_de.vocab_size] + tokenizer_de.encode(lang1.numpy()) + [tokenizer_de.vocab_size + 1]
+        lang2 = [tokenizer_en.vocab_size] + tokenizer_en.encode(lang2.numpy()) + [tokenizer_en.vocab_size + 1]
         return lang1, lang2
 
     def tf_encode(de, en):
@@ -43,9 +36,7 @@ def load_and_preprocess_data(batch_size=64, max_length=40):
 
     train_dataset = train_dataset.cache()
     train_dataset = train_dataset.shuffle(1024)
-    train_dataset = train_dataset.padded_batch(
-        batch_size, padded_shapes=([None], [None])
-    )
+    train_dataset = train_dataset.padded_batch(batch_size, padded_shapes=([None], [None]))
     train_dataset = train_dataset.prefetch(tf.data.experimental.AUTOTUNE)
 
     val_dataset = val_dataset.padded_batch(batch_size, padded_shapes=([None], [None]))
