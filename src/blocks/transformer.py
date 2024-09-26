@@ -89,11 +89,11 @@ if __name__ == "__main__":
     num_heads = 8
     d_ff = 2048
     num_layers = 6
-    input_vocab_size = 85
-    target_vocab_size = 80
+    input_vocab_size = 85000
+    target_vocab_size = 80000
     max_seq_len_input = 256
     max_seq_len_target = 256
-    num_epochs = 2
+    num_epochs = 20
 
     # Create sample data
     sample_input = tf.random.uniform(
