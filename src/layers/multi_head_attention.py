@@ -6,6 +6,9 @@ class MultiHeadAttention(tf.keras.layers.Layer):  # TODO: implament masking
         self, d_embedding: int, num_heads: int, *args: list, **kwargs: dict
     ) -> None:
         super().__init__(*args, **kwargs)
+        assert (
+            d_embedding % num_heads == 0
+        ), "d_embedding must be divisible by num_heads"
         self.d_embedding = d_embedding
         self.num_heads = num_heads
         self.d_k = self.d_embedding // self.num_heads
@@ -24,7 +27,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):  # TODO: implament masking
     def apply_attention_mask(self, attention_scores, mask=None):
         if mask is not None:
             mask = tf.cast(mask[:, tf.newaxis, tf.newaxis, :], tf.float32)
-            attention_scores += (1.0 - mask) * -1e9
+            attention_scores += mask * -1e9
         return attention_scores
 
     def call(self, inputs, mask=None):

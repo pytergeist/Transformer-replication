@@ -21,11 +21,12 @@ class PositionalEncoding(tf.keras.layers.Layer):
         angle = position / frequency_scale
         return tf.where(dimension % 2 == 0, tf.math.sin(angle), tf.math.cos(angle))
 
-    def call(self, inputs):  # TODO: broadcast to allow for flexibility in tensor shape
+    def call(self, inputs):
+        seq_length = tf.shape(inputs)[1]
         embedded_inputs = self.embedding(inputs)
         embedded_inputs *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
-        position_encoded_inputs = self.positional_encoder(self.length, self.d_model)
-        embedded_inputs += position_encoded_inputs
+        position_encoded_inputs = self.positional_encoding[:seq_length, :]
+        embedded_inputs += position_encoded_inputs[tf.newaxis, :, :]
         return embedded_inputs
 
 

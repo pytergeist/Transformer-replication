@@ -1,9 +1,10 @@
 import tensorflow as tf
-
 from src.layers.multi_head_attention import MultiHeadAttention
 from src.layers.dropout import DropoutLayer
 from src.blocks.feed_forward_block import FeedForwardNetwork
 from src.layers.layer_norm import LayerNormalisation
+from src.logging.log_config import logger
+from src.logging.log_utils import log_tensor_shape
 
 
 class DecoderBlock(tf.keras.layers.Layer):
@@ -22,17 +23,43 @@ class DecoderBlock(tf.keras.layers.Layer):
         self.layer_norm3 = LayerNormalisation(epsilon=1e-8)
 
     def call(self, inputs, encoder_output, look_ahead_mask=None, padding_mask=None):
-        attn1 = self.attention1(inputs, mask=look_ahead_mask)
-        attn1 = DropoutLayer(self.dropout_rate)(attn1)
-        out1 = self.layer_norm1(inputs + attn1)
+        try:
+            logger.info("DecoderBlock call")
+            log_tensor_shape(inputs, "inputs")
+            log_tensor_shape(encoder_output, "encoder_output")
 
-        attn2 = self.attention2(out1, mask=padding_mask)
-        attn2 = DropoutLayer(self.dropout_rate)(attn2)
-        out2 = self.layer_norm2(out1 + attn2)
+            attn1 = self.attention1(inputs, mask=look_ahead_mask)
+            logger.info("After first attention (attn1)")
+            log_tensor_shape(attn1, "attn1")
 
-        ffn_output = self.feed_forward(out2)
-        ffn_output = DropoutLayer(self.dropout_rate)(ffn_output)
-        return self.layer_norm3(out2 + ffn_output)
+            attn1 = DropoutLayer(self.dropout_rate)(attn1)
+            out1 = self.layer_norm1(inputs + attn1)
+            logger.info("After first LayerNorm")
+            log_tensor_shape(out1, "out1")
+
+            attn2 = self.attention2(out1, encoder_output, mask=padding_mask)
+            logger.info("After second attention (attn2)")
+            log_tensor_shape(attn2, "attn2")
+
+            attn2 = DropoutLayer(self.dropout_rate)(attn2)
+            out2 = self.layer_norm2(out1 + attn2)
+            logger.info("After second LayerNorm")
+            log_tensor_shape(out2, "out2")
+
+            ffn_output = self.feed_forward(out2)
+            logger.info("After feed forward network (ffn_output)")
+            log_tensor_shape(ffn_output, "ffn_output")
+
+            ffn_output = DropoutLayer(self.dropout_rate)(ffn_output)
+            output = self.layer_norm3(out2 + ffn_output)
+            logger.info("After third LayerNorm (final output)")
+            log_tensor_shape(output, "output")
+
+            return output
+
+        except Exception as e:
+            logger.error(f"Error in DecoderBlock: {e}")
+            raise
 
 
 class DecoderStack(tf.keras.layers.Layer):
@@ -58,9 +85,15 @@ class DecoderStack(tf.keras.layers.Layer):
         ]
 
     def call(self, inputs, encoder_output, look_ahead_mask=None, padding_mask=None):
+        logger.info("DecoderStack call")
+        log_tensor_shape(inputs, "inputs")
+        log_tensor_shape(encoder_output, "encoder_output")
+
         x = inputs
-        for block in self.decoder_blocks:
+        for i, block in enumerate(self.decoder_blocks):
+            logger.info(f"Passing through DecoderBlock {i + 1}")
             x = block(x, encoder_output, look_ahead_mask, padding_mask)
+            log_tensor_shape(x, f"output from DecoderBlock {i + 1}")
         return x
 
 
