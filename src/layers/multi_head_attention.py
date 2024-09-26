@@ -1,7 +1,10 @@
 import tensorflow as tf
 
+from src.logging.log_config import logger
+from src.logging.log_utils import log_tensor_shape
 
-class MultiHeadAttention(tf.keras.layers.Layer):  # TODO: implament masking
+
+class MultiHeadAttention(tf.keras.layers.Layer):
     def __init__(
         self, d_embedding: int, num_heads: int, *args: list, **kwargs: dict
     ) -> None:
@@ -26,28 +29,53 @@ class MultiHeadAttention(tf.keras.layers.Layer):  # TODO: implament masking
 
     def apply_attention_mask(self, attention_scores, mask=None):
         if mask is not None:
-            mask = tf.cast(mask[:, tf.newaxis, tf.newaxis, :], tf.float32)
+            # mask = tf.cast(mask[:, tf.newaxis, :, :], tf.float32)
+            log_tensor_shape(mask, "mask")
             attention_scores += mask * -1e9
         return attention_scores
 
-    def call(self, inputs, mask=None):
-        batch_size = tf.shape(inputs)[0]
+    def call(self, query_input, key_input=None, value_input=None, mask=None):
+        logger.debug("MultiHeadAttention call")
+        batch_size = tf.shape(query_input)[0]
+        logger.info(f"{batch_size}")
 
-        queries = self.queries(inputs)
-        keys = self.keys(inputs)
-        values = self.values(inputs)
+        if key_input is None:  # TODO: make more elegant
+            key_input = query_input
+        if value_input is None:
+            value_input = query_input
+
+        queries, keys, values = (
+            self.queries(query_input),
+            self.keys(key_input),
+            self.values(value_input),
+        )
+
+        log_tensor_shape(queries, "queries")
+        log_tensor_shape(keys, "keys")
+        log_tensor_shape(values, "values")
 
         queries = self.split_heads(queries, batch_size)
         keys = self.split_heads(keys, batch_size)
         values = self.split_heads(values, batch_size)
 
+        log_tensor_shape(queries, "split queries")
+        log_tensor_shape(keys, "split keys")
+        log_tensor_shape(values, "split values")
+
         scores = tf.matmul(queries, keys, transpose_b=True)
+        log_tensor_shape(scores, "queries keys matmul")
         scores = scores / tf.math.sqrt(tf.cast(self.d_k, tf.float32))
+        log_tensor_shape(scores, "scaled scores")
         scores = self.apply_attention_mask(scores, mask)
+        log_tensor_shape(scores, "masked scores")
 
         attention_weights = tf.nn.softmax(scores, axis=-1)
+        log_tensor_shape(attention_weights, "attention_weights")
+        log_tensor_shape(values, "values")
 
         output = tf.matmul(attention_weights, values)
+
+        log_tensor_shape(output, "output")
 
         output = tf.transpose(output, perm=[0, 2, 1, 3])
         concat_output = tf.reshape(output, (batch_size, -1, self.d_embedding))

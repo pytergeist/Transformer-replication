@@ -38,7 +38,7 @@ class Transformer(tf.keras.Model):
         self.dropout = DropoutLayer(dropout_rate)
 
     def create_padding_mask(self, seq):
-        return tf.cast(tf.math.equal(seq, 0), tf.float32)[:, tf.newaxis, tf.newaxis, :]
+        return tf.cast(tf.math.equal(seq, 0), tf.float32)[:, tf.newaxis, :, :]
 
     def create_look_ahead_mask(self, size):
         mask = 1 - tf.linalg.band_part(tf.ones((size, size)), -1, 0)
@@ -52,21 +52,12 @@ class Transformer(tf.keras.Model):
         look_ahead_mask=None,
         dec_padding_mask=None,
     ):
-        logger.info("Starting Transformer call")
-
-        # Log input shapes
-        log_tensor_shape(inputs, "inputs")
-        log_tensor_shape(targets, "targets")
 
         inputs = self.positional_encoding_inputs(inputs)
         targets = self.positional_encoding_targets(targets)
 
-        logger.info("After positional encoding")
-
         inputs = self.dropout(inputs)
         targets = self.dropout(targets)
-
-        logger.info("After dropout")
 
         enc_padding_mask = self.create_padding_mask(inputs)
         look_ahead_mask = self.create_look_ahead_mask(tf.shape(targets)[1])
@@ -78,20 +69,13 @@ class Transformer(tf.keras.Model):
         )  # (batch_size, num_heads, seq_len, seq_len)
         dec_padding_mask = self.create_padding_mask(targets)
 
-        logger.info("Before encoder call")
         enc_output = self.encoder(inputs, mask=enc_padding_mask)
-        log_tensor_shape(enc_output, "enc_output")
 
-        logger.info("Before decoder call")
         dec_output = self.decoder(
             targets, enc_output, look_ahead_mask, dec_padding_mask
         )
-        log_tensor_shape(dec_output, "dec_output")
 
         final_output = self.final_layer(dec_output)
-        log_tensor_shape(final_output, "final_output")
-
-        logger.info("Completed Transformer call")
 
         return final_output
 
@@ -130,6 +114,3 @@ if __name__ == "__main__":
     )
 
     output = transformer(sample_input, sample_target)
-
-    logger.info(f"Output shape: {output.shape}")
-    logger.info(f"Sample output (first element of the first batch): {output[0][0]}")

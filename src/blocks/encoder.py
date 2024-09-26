@@ -7,6 +7,8 @@ from src.layers.dropout import DropoutLayer
 from src.blocks.feed_forward_block import FeedForwardNetwork
 from src.layers.layer_norm import LayerNormalisation
 
+from src.logging.log_config import logger
+
 
 class EncoderBlock(tf.keras.layers.Layer):
 
@@ -53,6 +55,7 @@ class EncoderStack(tf.keras.layers.Layer):
         ]
 
     def call(self, inputs, mask=None):
+        logger.info("EncoderStack called")
         x = inputs
         for block in self.encoder_blocks:
             x = block(x)

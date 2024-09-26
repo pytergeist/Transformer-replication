@@ -24,36 +24,25 @@ class DecoderBlock(tf.keras.layers.Layer):
 
     def call(self, inputs, encoder_output, look_ahead_mask=None, padding_mask=None):
         try:
-            logger.info("DecoderBlock call")
-            log_tensor_shape(inputs, "inputs")
-            log_tensor_shape(encoder_output, "encoder_output")
 
             attn1 = self.attention1(inputs, mask=look_ahead_mask)
-            logger.info("After first attention (attn1)")
-            log_tensor_shape(attn1, "attn1")
 
             attn1 = DropoutLayer(self.dropout_rate)(attn1)
             out1 = self.layer_norm1(inputs + attn1)
-            logger.info("After first LayerNorm")
-            log_tensor_shape(out1, "out1")
-
-            attn2 = self.attention2(out1, encoder_output, mask=padding_mask)
-            logger.info("After second attention (attn2)")
-            log_tensor_shape(attn2, "attn2")
+            attn2 = self.attention2(
+                out1,
+                key_input=encoder_output,
+                value_input=encoder_output,
+                mask=padding_mask,
+            )
 
             attn2 = DropoutLayer(self.dropout_rate)(attn2)
             out2 = self.layer_norm2(out1 + attn2)
-            logger.info("After second LayerNorm")
-            log_tensor_shape(out2, "out2")
 
             ffn_output = self.feed_forward(out2)
-            logger.info("After feed forward network (ffn_output)")
-            log_tensor_shape(ffn_output, "ffn_output")
 
             ffn_output = DropoutLayer(self.dropout_rate)(ffn_output)
             output = self.layer_norm3(out2 + ffn_output)
-            logger.info("After third LayerNorm (final output)")
-            log_tensor_shape(output, "output")
 
             return output
 
@@ -85,15 +74,10 @@ class DecoderStack(tf.keras.layers.Layer):
         ]
 
     def call(self, inputs, encoder_output, look_ahead_mask=None, padding_mask=None):
-        logger.info("DecoderStack call")
-        log_tensor_shape(inputs, "inputs")
-        log_tensor_shape(encoder_output, "encoder_output")
-
+        logger.info("EncoderStack called")
         x = inputs
         for i, block in enumerate(self.decoder_blocks):
-            logger.info(f"Passing through DecoderBlock {i + 1}")
             x = block(x, encoder_output, look_ahead_mask, padding_mask)
-            log_tensor_shape(x, f"output from DecoderBlock {i + 1}")
         return x
 
 
