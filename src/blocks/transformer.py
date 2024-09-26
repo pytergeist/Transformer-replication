@@ -111,7 +111,6 @@ if __name__ == "__main__":
     padded_targets = tf.pad(targets, [[0, 0], [0, 1]], "CONSTANT")
     padded_targets_shifted = tf.pad(targets_shifted, [[0, 0], [0, 1]], "CONSTANT")
 
-
     transformer = Transformer(
         num_layers,
         d_model,
@@ -127,7 +126,7 @@ if __name__ == "__main__":
     transformer.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-        metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+        metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
     )
 
     # Train the model
@@ -135,5 +134,5 @@ if __name__ == "__main__":
         x=(inputs, padded_targets),
         y=padded_targets_shifted,
         batch_size=batch_size,
-        epochs=num_epochs
+        epochs=num_epochs,
     )
