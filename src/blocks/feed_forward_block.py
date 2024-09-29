@@ -1,4 +1,4 @@
-# feed_forward_network.py
+# feed_forward_block.py
 
 import os
 
@@ -8,7 +8,7 @@ from src.layers.feed_forward import FeedForwardLayer
 from src.activations.relu import ReLUActivation
 
 
-class FeedForwardNetwork(tf.keras.Model):
+class FeedForwardNetwork(tf.keras.layers.Layer):
     def __init__(self, d_model=512, d_ff=2048, *args, **kwargs):
         super(FeedForwardNetwork, self).__init__(*args, **kwargs)
         self.dense_1 = FeedForwardLayer(units=d_ff)

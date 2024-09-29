@@ -11,7 +11,7 @@ class ReLUActivation(tf.keras.layers.Layer):
         return tf.math.maximum(inputs, 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     inputs = tf.random.uniform(shape=[1, 10, 10], minval=-0.5, maxval=0.9)
     relu = ReLUActivation()
     outputs = relu(inputs)
