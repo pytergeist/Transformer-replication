@@ -1,3 +1,5 @@
+# byte_pair_encoder.py
+
 import re
 from collections import Counter, defaultdict
 
