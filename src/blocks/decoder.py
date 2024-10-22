@@ -1,10 +1,11 @@
 # decoder.py
 
 import tensorflow as tf
-from src.layers.multi_head_attention import MultiHeadAttention
-from src.layers.dropout import DropoutLayer
+
 from src.blocks.feed_forward_block import FeedForwardNetwork
+from src.layers.dropout import DropoutLayer
 from src.layers.layer_norm import LayerNormalisation
+from src.layers.multi_head_attention import MultiHeadAttention
 from src.logging.log_config import logger
 from src.logging.log_utils import log_tensor_shape
 

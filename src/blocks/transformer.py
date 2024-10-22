@@ -1,11 +1,12 @@
 # transformer.py
 
 import tensorflow as tf
-from src.blocks.encoder import EncoderStack
+
 from src.blocks.decoder import DecoderStack
+from src.blocks.encoder import EncoderStack
+from src.layers.dropout import DropoutLayer
 from src.layers.feed_forward import FeedForwardLayer
 from src.layers.positional_encoding import PositionalEncoding
-from src.layers.dropout import DropoutLayer
 from src.logging.log_config import logger
 from src.logging.log_utils import log_tensor_shape
 

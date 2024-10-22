@@ -1,11 +1,9 @@
 # feed_forward_block.py
 
-import os
-
 import tensorflow as tf
 
-from src.layers.feed_forward import FeedForwardLayer
 from src.activations.relu import ReLUActivation
+from src.layers.feed_forward import FeedForwardLayer
 
 
 class FeedForwardNetwork(tf.keras.layers.Layer):
